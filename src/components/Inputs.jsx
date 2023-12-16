@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Tasks from './Tasks'
 
 function Inputs() {
@@ -7,8 +7,30 @@ function Inputs() {
     const [list, setList] = useState([])
     const inputRef = useRef()
 
+    useEffect(() => {
+        let todos = JSON.parse(localStorage.getItem('array'))
+        if(!todos){
+            localStorage.setItem('array',JSON.stringify([]))
+        }else{
+            setList(todos)
+        }
+    }, [])
+
+    useEffect(() => {
+        let todos = JSON.parse(localStorage.getItem('array'))
+        if(!todos){
+           todos = localStorage.setItem('array',[])
+        }else{
+            let str = JSON.stringify(list)
+            todos = localStorage.setItem('array',str)
+        }
+
+    },[list])
+
+
     function pushList(){
-        setList(preveList => [...preveList,todo])
+        setList(prevList => [...prevList,todo])
+        inputRef.current.value = ""
     }
 
 
@@ -38,7 +60,7 @@ function Inputs() {
             onClick={pushList}
             >Todo Ekle</button>
         </div>
-        <Tasks list={list} />
+        <Tasks list={list} setList={setList}/>
     </div>
   )
 }
